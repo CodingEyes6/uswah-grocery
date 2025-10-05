@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Uswah Grocery — Delete Account Request</title>
+  <meta name="description" content="Request account deletion for Uswah Grocery" />
+  <style>
+    :root{--bg:#f7f8fb;--card:#ffffff;--muted:#6b7280;--accent:#0369a1;--accent-2:#0ea5a3;--radius:12px}
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;line-height:1.6;margin:0;background:linear-gradient(180deg,var(--bg),#fff);color:#0f172a}
+    .container{max-width:760px;margin:36px auto;padding:20px}
+    header{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px}
+    h1{margin:0;font-size:22px}
+    .meta{color:var(--muted);font-size:13px}
+    .card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:0 8px 30px rgba(12,18,28,0.06);margin-top:14px}
+    label{display:block;font-weight:600;margin-bottom:6px}
+    input[type="email"], textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #e6edf3;font-size:14px}
+    textarea{min-height:110px;resize:vertical}
+    .row{display:flex;gap:12px}
+    .muted{color:var(--muted)}
+    .btn{background:var(--accent);color:white;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid #dbeafe}
+    .notice{background:#fff7ed;border-left:4px solid #f59e0b;padding:10px 12px;border-radius:8px;margin-bottom:12px}
+    .success{background:#ecfdf5;border-left:4px solid #10b981;padding:10px 12px;border-radius:8px;margin-top:12px;display:none}
+    .small{font-size:13px}
+    .center{display:flex;justify-content:center}
+    a{color:var(--accent)}
+    footer{margin-top:18px;font-size:13px;color:var(--muted);text-align:center}
+    @media (max-width:680px){.row{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">UG</div>
+      <div>
+        <h1>Delete Account Request</h1>
+        <div class="meta">Uswah Grocery — Request to permanently delete your account</div>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="notice">
+        <strong>Important:</strong> Sending a delete request will start the account removal process. We may ask for identity verification before permanently deleting your account to protect you from unauthorized requests.
+      </div>
+
+      <form id="deleteForm">
+        <div style="margin-bottom:12px">
+          <label for="email">Your account email</label>
+          <input id="email" type="email" placeholder="you@example.com" required aria-required="true" />
+          <div id="emailError" class="small" style="color:#dc2626;display:none;margin-top:6px">Please enter a valid email address.</div>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label for="reason">Reason for deletion (optional)</label>
+          <textarea id="reason" placeholder="Tell us why you're leaving (helps us improve)"></textarea>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label style="display:flex;align-items:center;gap:8px"><input id="confirm" type="checkbox" /> <span class="small">I confirm that I want to permanently delete my Uswah Grocery account and understand this is irreversible.</span></label>
+          <div id="confirmError" class="small" style="color:#dc2626;display:none;margin-top:6px">Please confirm that you want to delete your account.</div>
+        </div>
+
+        <div class="row" style="align-items:center">
+          <button type="submit" class="btn">Submit Delete Request</button>
+          <button type="button" id="mailtoBtn" class="btn ghost">Open email app</button>
+        </div>
+
+        <div id="result" class="success" role="status" aria-live="polite">
+          <strong>Request saved.</strong> Please open your email app and send the pre-filled email to our team or we will contact you soon for verification.
+        </div>
+
+        <p class="small muted" style="margin-top:12px">If you prefer, you can also email us directly at <a href="mailto:privacy@uswahgrocery.com">privacy@uswahgrocery.com</a>. Replace the sample email with your real support email in the code before publishing.</p>
+      </form>
+    </div>
+
+    <footer class="muted">© <span id="y">2025</span> Uswah Grocery</footer>
+  </div>
+
+  <script>
+    (function(){
+      document.getElementById('y').textContent = new Date().getFullYear();
+      const form = document.getElementById('deleteForm');
+      const email = document.getElementById('email');
+      const reason = document.getElementById('reason');
+      const confirm = document.getElementById('confirm');
+      const result = document.getElementById('result');
+      const emailError = document.getElementById('emailError');
+      const confirmError = document.getElementById('confirmError');
+      const mailtoBtn = document.getElementById('mailtoBtn');
+
+      function validEmail(e){
+        return /\S+@\S+\.\S+/.test(e);
+      }
+
+      function buildMailtoAddress(data){
+        const to = 'privacy@uswahgrocery.com'; // <-- Replace with your real support email
+        const subject = encodeURIComponent('Delete Account Request');
+        let body = 'Delete account request from user email: '+encodeURIComponent(data.email)+"%0D%0A%0D%0A";
+        if(data.reason) body += 'Reason: '+encodeURIComponent(data.reason)+"%0D%0A%0D%0A";
+        body += 'Please verify identity and proceed with account deletion as per policy.';
+        return `mailto:${to}?subject=${subject}&body=${body}`;
+      }
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        emailError.style.display = 'none'; confirmError.style.display = 'none';
+        if(!validEmail(email.value.trim())){ emailError.style.display = 'block'; return; }
+        if(!confirm.checked){ confirmError.style.display = 'block'; return; }
+
+        // Save request locally as history (optional)
+        const history = JSON.parse(localStorage.getItem('uswah_delete_requests') || '[]');
+        history.push({email: email.value.trim(), reason: reason.value.trim(), date: new Date().toISOString()});
+        localStorage.setItem('uswah_delete_requests', JSON.stringify(history));
+
+        // Show success UI
+        result.style.display = 'block';
+
+        // Open user's email app with prefilled message (recommended)
+        setTimeout(()=>{
+          window.location.href = buildMailtoAddress({email: email.value.trim(), reason: reason.value.trim()});
+        }, 700);
+      });
+
+      mailtoBtn.addEventListener('click', function(){
+        const em = email.value.trim();
+        if(!validEmail(em)){ emailError.style.display = 'block'; return; }
+        window.location.href = buildMailtoAddress({email: em, reason: reason.value.trim()});
+      });
+
+    })();
+  </script>
+</body>
+</html>
